@@ -9,12 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -36,6 +38,12 @@ interface OrderDao {
 
     @Query("SELECT * FROM orders WHERE id = :id")
     fun getById(id:Int): Flow<OrderEntity?>
+
+    @Update
+    suspend fun update(order: OrderEntity)
+
+    @Delete
+    suspend fun remove(order: OrderEntity)
 }
 
 @Database(
@@ -74,6 +82,14 @@ class OrderRepository(private val dao: OrderDao) {
         return dao.getById(id)
     }
 
+    suspend fun update(order: OrderEntity){
+        dao.update(order)
+    }
+
+    suspend fun remove(order: OrderEntity){
+        dao.remove(order)
+    }
+
 
 }
 
@@ -94,6 +110,22 @@ class OrderViewModel(
     val drinks = repository.drinks
     fun getOrderId(id:Int): Flow<OrderEntity?>{
         return repository.getOrderId(id)
+    }
+    fun updateOrder(id:Int,size:String,num:Int,note: String){
+        viewModelScope.launch {
+            repository.update(OrderEntity(
+                id = id,
+                size = size,
+                 num = num,
+                note = note
+            ))
+        }
+    }
+
+    fun removeOrder(order: OrderEntity){
+        viewModelScope.launch {
+            repository.remove(order)
+        }
     }
 
 }

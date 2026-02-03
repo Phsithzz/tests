@@ -43,7 +43,9 @@ fun HistoryPage(viewModel: OrderViewModel,navController: NavController){
 
                     }
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            viewModel.removeOrder(orders)
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete, contentDescription = "deleteIcon"

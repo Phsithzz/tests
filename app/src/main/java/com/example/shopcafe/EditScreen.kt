@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.rounded.DoNotDisturbOn
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -134,18 +137,30 @@ fun EditScreen(drinkId:Int,viewModel: OrderViewModel, navController: NavControll
 
 
         Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .clickable {
+        Button(
+            onClick={
+                drinkId?.let {
+                    viewModel.updateOrder(
+                        id = drinkId,
+                        size=selectedOption,
+                        num = amount,
+                        note = detail
+                    )
 
                 }
-                .fillMaxWidth()
-                .background(Color(0xff5DD3B6))
-                .padding(15.dp),
-            contentAlignment = Alignment.Center
+                navController.popBackStack()
+            },
+            modifier = Modifier.fillMaxWidth().height(50.dp), shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xff5dd3b6),
+                contentColor = Color.White
+            )
         ) {
-            Text("แก้ไขข้อมูล", color = Color.White)
+            Text(
+                text = "แก้ไขข้อมูล"
+            )
         }
+
 
 
     }
