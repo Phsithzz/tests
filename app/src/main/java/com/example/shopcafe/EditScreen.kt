@@ -22,6 +22,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,17 +39,30 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun EditScreen(navController: NavController,   sharedViewModel: SharedViewModel) {
+fun EditScreen(drinkId:Int,viewModel: OrderViewModel, navController: NavController) {
+    val sizeOption = listOf("S", "M", "L")
+    var selectedOption by remember { mutableStateOf(sizeOption[0]) }
+
+    var detail by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf(1) }
+
+    val drinks by viewModel.getOrderId(drinkId).collectAsState(initial = null)
+
+    LaunchedEffect(drinks) {
+        drinks?.let{
+            amount = it.num
+            selectedOption = it.size
+            detail = it.note ?: ""
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        val sizeOption = listOf("S", "M", "L")
-        var selectedOption by remember { mutableStateOf(sizeOption[0]) }
 
-        var detail by remember { mutableStateOf("") }
-        var amount by remember { mutableStateOf(1) }
+
+
         Image(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,7 +112,7 @@ fun EditScreen(navController: NavController,   sharedViewModel: SharedViewModel)
             Text(text = "จำนวน: ")
 
             IconButton(onClick = {
-                if (amount > 0) amount--
+                if (amount > 1) amount--
             }) {
                 Icon(
                     imageVector = Icons.Rounded.DoNotDisturbOn,
@@ -122,19 +137,14 @@ fun EditScreen(navController: NavController,   sharedViewModel: SharedViewModel)
         Box(
             modifier = Modifier
                 .clickable {
-                    sharedViewModel.setOrder(
-                        size = selectedOption,
-                        num = amount,
-                        note = detail
-                    )
-                    navController.navigate("confirm")
+
                 }
                 .fillMaxWidth()
                 .background(Color(0xff5DD3B6))
                 .padding(15.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("ใส่ตะกร้า", color = Color.White)
+            Text("แก้ไขข้อมูล", color = Color.White)
         }
 
 

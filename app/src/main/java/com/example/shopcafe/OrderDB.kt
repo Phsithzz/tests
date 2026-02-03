@@ -32,7 +32,10 @@ interface OrderDao {
     suspend fun insert(order: OrderEntity)
 
     @Query("SELECT * FROM orders")
-    fun getAll(): Flow<List<OrderEntity>>
+     fun getAll(): Flow<List<OrderEntity>>
+
+    @Query("SELECT * FROM orders WHERE id = :id")
+    fun getById(id:Int): Flow<OrderEntity?>
 }
 
 @Database(
@@ -66,6 +69,12 @@ class OrderRepository(private val dao: OrderDao) {
     }
 
     val drinks = dao.getAll()
+
+    fun getOrderId(id: Int): Flow<OrderEntity?>{
+        return dao.getById(id)
+    }
+
+
 }
 
 class OrderViewModel(
@@ -83,6 +92,10 @@ class OrderViewModel(
         }
     }
     val drinks = repository.drinks
+    fun getOrderId(id:Int): Flow<OrderEntity?>{
+        return repository.getOrderId(id)
+    }
+
 }
 class SharedViewModel : ViewModel() {
     var size by mutableStateOf("")

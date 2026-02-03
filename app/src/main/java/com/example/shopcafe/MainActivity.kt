@@ -61,9 +61,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -159,7 +161,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("history") {
-                            HistoryPage(orderViewModel)
+                            HistoryPage(orderViewModel,navController = navController)
+                        }
+                        composable(
+                            "edit/{id}",
+                            arguments = listOf(navArgument("id"){
+                            type = NavType.IntType
+                        })){
+                           backStackEntry ->
+                            val id =backStackEntry.arguments?.getInt("id")?:0
+                            EditScreen(
+                                drinkId = id,
+                                viewModel = orderViewModel,
+                                navController = navController,
+
+                            )
                         }
 
                     }
@@ -231,7 +247,7 @@ fun Menu(navController: NavController,   sharedViewModel: SharedViewModel) {
             Text(text = "จำนวน: ")
 
             IconButton(onClick = {
-                if (amount > 0) amount--
+                if (amount > 1) amount--
             }) {
                 Icon(
                     imageVector = Icons.Rounded.DoNotDisturbOn,
